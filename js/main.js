@@ -78,7 +78,7 @@
       movePill(chip);
       cards.forEach((card, i) => {
         card.hidden = !(f === 'all' || card.dataset.type === f);
-        card.classList.toggle('feat', f === 'all' && i === 0);
+        card.classList.toggle('feat', f === 'all' && card.hasAttribute('data-feat'));
       });
       if (reduce) return;
       cards.filter((c) => !c.hidden).forEach((card) => {
