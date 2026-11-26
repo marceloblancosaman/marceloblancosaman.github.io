@@ -1,0 +1,76 @@
+/* ==========================================================
+   Gatos del portafolio: Pucho, Neo y Ñaña
+   - Pantalla de carga (solo la primera visita de la sesión)
+   - Un gato se asoma detrás de cada tarjeta de proyecto
+   ========================================================== */
+
+/* ---------- 1 · Pantalla de carga ---------- */
+.gato-carga { display: none; }
+.cat-first .gato-carga {
+  position: fixed; inset: 0; z-index: 200; display: grid; place-items: center;
+  background: var(--papel); transition: opacity .35s ease, visibility .35s;
+}
+.gato-carga.hide { opacity: 0; visibility: hidden; }
+.cat-first body { overflow: hidden; }
+.cat-first.cat-done body { overflow: auto; }
+.gc-in { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.gc-pucho { position: relative; width: 140px; height: 197px; }
+.gc-pucho .gc-body { position: absolute; left: 0; bottom: 0; width: 140px; height: 120.4px; }
+.gc-pucho .gc-head { position: absolute; left: 12.6px; top: 0; width: 100.8px; height: 93.8px; }
+.gc-tail { transform-box: view-box; transform-origin: 280px 316px; animation: gc-tail 1.6s ease-in-out infinite; }
+@keyframes gc-tail { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-18deg); } }
+.gc-bar { width: 120px; height: 3px; border-radius: 2px; background: var(--linea); overflow: hidden; }
+.gc-bar span { display: block; height: 100%; width: 0; background: var(--rojo); }
+.gc-txt { font: 400 12px/1 var(--f-g); color: var(--gris); }
+.gc-slow { position: absolute; bottom: 0; left: 50%; width: 120px; transform: translate(-50%, 100%); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+.gc-slow.show { transform: translate(-50%, 40%); }
+
+/* Ojos: parpadeo lento */
+.gato .eye, .gato-carga .eye { transform-box: fill-box; transform-origin: center; }
+.gc-blink .eye { animation: gc-blink 1.8s ease-in-out infinite; }
+@keyframes gc-blink { 0%, 62%, 100% { transform: scaleY(1); } 70%, 80% { transform: scaleY(.08); } }
+
+/* ---------- 2 · Gatos en las tarjetas ---------- */
+/* Más aire entre filas para que la cabeza no tape la tarjeta de arriba */
+#proyectos .grid { row-gap: clamp(104px, 88px + 3vw, 140px) !important; margin-top: clamp(56px, 48px + 2vw, 72px); }
+
+.card-link { position: relative; isolation: isolate; }
+.card-link > .ph { z-index: 1; }
+
+.gato { --w: clamp(84px, 72px + 3vw, 116px); --x: 50%; position: absolute; left: var(--x); top: 0; pointer-events: none; }
+.card.feat .gato { --x: 78%; }
+.gato-peek { position: absolute; z-index: 0; left: 0; top: 0; width: var(--w); height: calc(var(--w) * .93);
+  transform: translate(-50%, 6%); transform-origin: 50% 100%; transition: transform .35s cubic-bezier(.2, .9, .25, 1.2); }
+.gato-paws, .gato-bow { position: absolute; z-index: 2; left: 0; opacity: 0; transition: opacity .2s, transform .3s; }
+.gato-paws { width: calc(var(--w) * .86); top: calc(var(--w) * -.07); transform: translate(-50%, 0); }
+.gato-bow { width: calc(var(--w) * .31); top: calc(var(--w) * -.08); transform: translate(-50%, 0); }
+
+/* Reposo: solo las orejitas */
+.gato.arrived .gato-peek { transform: translate(-50%, -34%); }
+/* Asomado (hover con mouse / tarjeta centrada en celular) */
+.gato.active .gato-peek { transform: translate(-50%, -91%); }
+.gato.active .gato-paws, .gato.active .gato-bow { opacity: 1; transform: translate(-50%, -4px); }
+
+/* Caricia: cierra los ojos e inclina la cabeza (~0,6 s) */
+.gato.petting .gato-peek { animation: gato-purr .6s ease-in-out forwards; }
+.gato.petting .eye { animation: gato-close .6s ease-in-out forwards; }
+@keyframes gato-purr {
+  0% { transform: translate(-50%, -91%) rotate(0); }
+  30% { transform: translate(-50%, -91%) rotate(-7deg); }
+  55% { transform: translate(-50%, -91%) rotate(-3deg); }
+  80%, 100% { transform: translate(-50%, -91%) rotate(-7deg); } }
+@keyframes gato-close { 0% { transform: scaleY(1); } 25%, 100% { transform: scaleY(.08); } }
+
+/* La tarjeta que tiene el gato asomado sube un poquito */
+.card-link > .ph { transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+.card-link.gato-on > .ph { transform: translateY(-4px); }
+
+@media (max-width: 767px) {
+  .gato { --w: 96px; }
+  .card.feat .gato { --x: 50%; }
+}
+
+/* Sin movimiento: gatos quietos y asomados, sin carga animada */
+@media (prefers-reduced-motion: reduce) {
+  .gato .gato-peek, .gato .eye, .gato-carga *, .gato-carga { animation: none !important; transition: none !important; }
+}
